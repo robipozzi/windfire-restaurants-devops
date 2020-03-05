@@ -1,11 +1,11 @@
 # Start - AWS VPC
 resource "aws_vpc" "robi-vpc" {
-  cidr_block = "${var.vpcCIDRblock}"
-  instance_tenancy = "${var.instanceTenancy}"
-  enable_dns_support = "${var.dnsSupport}"
-  enable_dns_hostnames = "${var.dnsHostNames}"
+  cidr_block            = "${var.vpcCIDRblock}"
+  instance_tenancy      = "${var.instanceTenancy}"
+  enable_dns_support    = "${var.dnsSupport}"
+  enable_dns_hostnames  = "${var.dnsHostNames}"
   tags = {
-    Name = "${var.vpc.tags}"
+    Name = "var.vpc['tag']"
   }
 }
 # Create the Subnet
@@ -14,9 +14,6 @@ resource "aws_subnet" "robi-subnet1" {
   cidr_block = "${var.subnetCIDRblock}"
   map_public_ip_on_launch = "${var.mapPublicIP}"
   availability_zone = "${var.availabilityZone}"
-  tags = {
-    Name = "${var.subnet.tags}"
-  }
 }
 # Create VPC Network access control list
 resource "aws_network_acl" "robi-vpc-acl" {
@@ -49,38 +46,26 @@ resource "aws_network_acl" "robi-vpc-acl" {
     from_port  = 1024
     to_port    = 65535
   }
-  tags = {
-    Name = "${var.vpc-acl.tags}"
-  }
 }
 # Create the Security Group
 resource "aws_security_group" "robi-vpc-security-group" {
   vpc_id       = "${aws_vpc.robi-vpc.id}"
-  name         = "${var.security-group.name}"
-  description  = "${var.security-group.description}"
+  name = "var.security-group['name']"
+  description = "var.security-group['description']"
   ingress {
     cidr_blocks = "${var.ingressCIDRblock}"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
   }
-  tags = {
-    Name = "${var.security-group.tags}"
-  }
 }
 # Create the Internet Gateway
 resource "aws_internet_gateway" "robi-vpc-gw" {
   vpc_id = "${aws_vpc.robi-vpc.id}"
-  tags = {
-    Name = "${var.internet-gateway.tags}"
-  }
 }
 # Create the Route Table
 resource "aws_route_table" "robi-vpc-route-table" {
   vpc_id = "${aws_vpc.robi-vpc.id}"
-  tags = {
-    Name = "${var.route-table.tags}"
-  }
 }
 # Create the Internet Access
 resource "aws_route" "My_VPC_internet_access" {

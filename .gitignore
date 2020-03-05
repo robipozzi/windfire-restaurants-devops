@@ -1,0 +1,4 @@
+aws/.terraform
+*.tfstate
+*.tfstate.backup
+*.tfvars.NOTUSED
