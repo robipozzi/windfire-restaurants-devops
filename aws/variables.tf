@@ -1,80 +1,105 @@
 variable "aws_access_key" { }
 variable "aws_secret_key" { }
 variable "aws_region" {
-  description = "One of us-east-2, us-east-1, us-west-1, us-west-2, ap-south-1, ap-northeast-2, ap-southeast-1, ap-southeast-2, ap-northeast-1, us-west-2, eu-central-1, eu-west-1, eu-west-2, eu-west-2, eu-north-1, sa-east-1"
   default  = "eu-central-1"
+  description = "One of us-east-2, us-east-1, us-west-1, us-west-2, ap-south-1, ap-northeast-2, ap-southeast-1, ap-southeast-2, ap-northeast-1, us-west-2, eu-central-1, eu-west-1, eu-west-2, eu-west-2, eu-north-1, sa-east-1"
 }
 variable "availabilityZone" {
   default = "eu-central-1a"
 }
-# AWS Network configuration variables - start
+###################################################################################
+################### Start - AWS Network configuration variables ###################
+###################################################################################
 variable "vpc" {
-  description = "Virtual Private Cloud definition"
-  default = "windfire-vpc"
-  #tags     = "Windfire VPC"
+  type = "string"
+  default = "Windfire Virtual Private Cloud"
 }
-variable "frontendSubnet" {
-  default = "windfire-frontend-subnet1"
-  #tags    = "Windfire frontend subnet 1"
+variable "subnet" {
+  type = "map"
+  default = {
+    "frontend" = "Windfire Frontend subnet 1"
+    "backend" = "Windfire Backend subnet 1"
+    "bastion" = "Windfire Bastion subnet "
+  }
 }
-variable "backendSubnet" {
-  default = "windfire-backend-subnet1"
-  #tags    = "Windfire backend subnet 1"
+variable "acl" {
+  type = "map"
+  default = {
+    "vpc" = "Windfire VPC ACL"
+    "public" = "Windfire Public ACL"
+    "private" = "Windfire Private ACL"
+    "bastion" = "Windfire Bastion ACL"
+  }
 }
-variable "vpc-acl" {
-  default = "windfire-acl"
-  #tags    = "Windfire ACL"
-}
-variable "frontend-security-group" {
-  description = "Frontend Security Group"
-  default     = "windfire-securitygroup"
-  #tags        = "Windfire Security Group"
+variable "security-group" {
+  type = "map"
+  default = {
+    "frontend" = "Windfire Frontend Security Group"
+    "backend" = "Windfire Backend Security Group"
+    "bastion" = "Windfire Bastion Security Group"
+    "management" = "Windfire Management Security Group"
+  }
 }
 variable "internet-gateway" {
-  default = "windfire-igw"
-  #tags    = "Windfire Internet Gateway"
+  type = "string"
+  default = "Windfire Internet Gateway"
 }
-variable "public-routetable" {
-  default = "windfire-routetable"
-  #tags    = "Windfire Route Table"
+variable "nat-gateway" {
+  type = "string"
+  default = "Windfire NAT Gateway"
+}
+variable "routetable" {
+  type = "map"
+  default = {
+    "public" = "Windfire Public Route Table"
+    "private" = "Windfire Private Route Table"
+  }
 }
 variable "instanceTenancy" {
- default = "default"
+  default = "default"
 }
 variable "dnsSupport" {
- default = true
+  default = true
 }
 variable "dnsHostNames" {
   default = true
 }
-variable "vpcCIDRblock" {
-  default = "10.0.0.0/16"
-}
-variable "frontendSubnetCIDRblock" {
-  default = "10.0.1.0/24"
-}
-variable "backendSubnetCIDRblock" {
-  default = "10.0.2.0/24"
+variable "cidr" {
+  type = "map"
+  default = {
+    "vpc" = "10.0.0.0/16"
+    "frontend" = "10.0.1.0/24"
+    "backend" = "10.0.2.0/24"
+    "bastion" = "10.0.0.0/24"
+  }
 }
 variable "allIPsCIDRblock" {
   default = "0.0.0.0/0"
 }
-variable "ingressCIDRblock" {
-  default = [ "0.0.0.0/0" ]
-}
 variable "mapPublicIP" {
   default = true
 }
-# AWS Network configuration variables - end
+#################################################################################
+################### End - AWS Network configuration variables ###################
+#################################################################################
+#=============================================================================
+#================== Start - AWS EC2 configuration variables ==================
+#=============================================================================
+variable "key_name" {
+  type = "string"
+  default = "aws-key"
+}
 variable "ssh_user" {
+  type = "string"
   default = "ec2-user"
-  description = "Most Ubuntu AMIs use Ubuntu as the default user. Normally safe to leave"
 }
-variable "bootstrap_script" {
-  default = "bootstrap.sh"
-  description = ""
+variable "keypair" {
+  type = "map"
+  default = {
+    "key_name" = "windfire-key"
+    "publickey" = "windfire-key.pub"
+  }
 }
-variable "bootstrap_script_dest_dir" {
-  default = "/tmp"
-  description = ""
-}
+#===========================================================================
+#================== End - AWS EC2 configuration variables ==================
+#===========================================================================
