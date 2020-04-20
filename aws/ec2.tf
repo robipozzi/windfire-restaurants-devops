@@ -11,6 +11,7 @@ resource "aws_instance" "windfire-web" {
   user_data = "${file("scripts/install-httpd.sh")}"
   tags = {
     Name = "Web Server"
+    Role = "frontend"
   }
 }
 resource "aws_instance" "windfire-backend" {
@@ -23,6 +24,7 @@ resource "aws_instance" "windfire-backend" {
   user_data = "${file("scripts/install-node.sh")}"
   tags = {
     Name = "Backend Server"
+    Role = "backend"
   }
 }
 resource "aws_instance" "bastion" {
@@ -33,6 +35,7 @@ resource "aws_instance" "bastion" {
   key_name = "${var.key_name}"
   tags = {
     Name = "Bastion Host"
+    Role = "bastion"
   }
 }
 #####################################################
