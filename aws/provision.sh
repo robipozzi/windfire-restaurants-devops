@@ -42,6 +42,8 @@ runTerraform()
 			        ;;
         apply )	    echo ${cyn}Running Terraform to build or change infrastructure ...${end}
                     terraform apply -auto-approve
+                    echo "Bastion Host IP   =" ${cyn}$(terraform output bastion-public_ip)${end}
+                    echo "Bastion Hostname  =" ${cyn}$(terraform output bastion-public_dns)${end}
                     ;;
         destroy )	echo ${cyn}Destroying Terraform managed infrastructure ...${end}
                     terraform destroy -auto-approve
