@@ -2,6 +2,7 @@ source ../setenv.sh
 
 ###### Variable section - START
 SCRIPT=provision.sh
+SCRIPT_WORKING_DIR=$PWD
 AWS_ACCESS_KEY=$1
 AWS_SECRET_KEY=$2
 FLAG=0
