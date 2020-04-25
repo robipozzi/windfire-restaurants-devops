@@ -1,14 +1,14 @@
-# Windfire Restaurants - AWS architecture
-The overall architecture created by applying these Terraform configurations is the following
+# Windfire Restaurants - AWS Single Zone Architecture
+The overall architecture created by applying the Terraform configurations provided is the following
 
 ![](images/AWS-robipozzi_windfire-restaurants.png)
 
 The following files and scripts are provided for Terraform experimentations with AWS:
 * *provision.sh* - this script runs Terraform configurations. It actually runs Terraform *Infrastructure as Code* configurations against AWS and requires 2 parameters:
-    * **AWS API KEY** : this is the API Key ID which needs to be generated through AWS IAM service and associated with an AWS User
+    * **AWS API KEY** : this is the API Key ID which needs to be generated through AWS IAM service and associated with an AWS User with the appropriate authorizations.
     * **AWS API SECRET**: this is the API Secret associated with the API Key
-* *aws.tf* - it defines the AWS provider used by all Terraform configurations
-* *network.tf* - this Terraform configuration defines a Virtual Private Cloud and all related Network objects, allowing the creation of the following elements in AWS:
+* *aws.tf* - Terraform configuration that defines AWS provider parameters used by all Terraform configurations
+* *network.tf* - Terraform configuration that defines a Virtual Private Cloud and all related Network objects, allowing the creation of the following elements in AWS:
     * 1 VPC                 - it defines a VPC within an established AWS region and availability zone 
                               (by default they are AZ 'eu-central-1a' within 'eu-central-1' region)
     * 1 Internet Gateway    - it defines an Internet Gateway to allow egress to the Internet
@@ -18,7 +18,7 @@ The following files and scripts are provided for Terraform experimentations with
     * 3 Subnets             - they are defined within the Availability zone: 1 Frontend subnet, 1 Backend subnet and 1 Subnet for Bastion Host
     * 3 NACLs               - each Network ACL is defined for and associated to one subnet
     * 3 Security Groups     - Security Groups are defined for server roles, 1 for Web Servers, 1 for Backend Servers and 1 for the Bastion Host 
-* *ec2.tf* - this Terraform configuration creates 3 EC2 instances:
+* *ec2.tf* - Terraform configuration that creates 3 EC2 instances:
     * 1 Bastion Host in Bastion subnet, associated to the related Network ACL and Security Group
     * 1 Web Server in Frontend subnet, associated to the related Network ACL and Security Group
     * 1 Backend Server in Backend subnet, associated to the related Network ACL and Security Group
