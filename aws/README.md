@@ -1,5 +1,5 @@
 # Windfire Restaurants - AWS Single Zone Architecture
-The overall architecture created by applying the Terraform configurations provided is the following
+The overall architecture created by applying the Terraform configurations provided in this folder is the following
 
 ![](images/AWS-robipozzi_windfire-restaurants.png)
 
