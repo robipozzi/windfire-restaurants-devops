@@ -3,8 +3,8 @@ The overall architecture created by applying the Terraform configurations provid
 
 ![](images/AWS-robipozzi_windfire-restaurants.png)
 
-The following files and scripts are provided for Terraform experimentations with AWS:
-* **provision.sh** - this script runs Terraform configurations. It actually runs Terraform *Infrastructure as Code* configurations against AWS and requires 2 parameters:
+The following files and scripts are provided to support AWS architecture provisioning using Terraform:
+* **provision.sh** - this script runs Terraform *Infrastructure as Code* configurations against AWS and requires 2 parameters: 
     * **AWS API KEY** : this is the API Key ID which needs to be generated through AWS IAM service and associated with an AWS User with the appropriate authorizations.
     * **AWS API SECRET**: this is the API Secret associated with the API Key
 * *aws.tf* - Terraform configuration that defines AWS provider parameters used by all Terraform configurations
@@ -24,4 +24,4 @@ The following files and scripts are provided for Terraform experimentations with
   Each EC2 instance is configured with a *key_name* attribute for SSH connection, whose value is configured in *variables.tf* and, by default, is set to **aws-key**, meaning that a Key Pair with that name must be previously have been created in AWS.
 * *variables.tf* - this file externalizes all the variables used by Terraform configurations
 
-Either Frontend and Backend subnets, although public ones, allow SSH connections coming from Bastion subnet (ingress SSH connections on port 22) only. The script **ssh-bastion.sh** is provided to SSH into private servers jumping through Bastion Host.
+Either Frontend and Backend subnets, although public ones, allow SSH connections coming from Bastion subnet (ingress SSH connections on port 22) only. The script [ssh-bastion.sh](../ssh-bastion.sh) is provided to SSH into private servers jumping through Bastion Host.
