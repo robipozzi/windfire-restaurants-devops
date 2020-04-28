@@ -17,18 +17,6 @@ resource "aws_internet_gateway" "windfire-igw" {
     Name = "${var.internet-gateway}"
   }
 }
-# Create NAT Gateway
-resource "aws_eip" "windfire-nat-eip" {
-  vpc = true
-}
-resource "aws_nat_gateway" "windfire-ngw" {
-  allocation_id = "${aws_eip.windfire-nat-eip.id}"
-  subnet_id = "${aws_subnet.windfire-frontend-subnet1.id}"
-  tags = {
-    Name = "${var.nat-gateway}"
-  }
-  depends_on = ["aws_internet_gateway.windfire-igw"]
-}
 # Create Route Tables
 resource "aws_route_table" "windfire-public-route" {
   vpc_id = "${aws_vpc.windfire-vpc.id}"
@@ -36,23 +24,11 @@ resource "aws_route_table" "windfire-public-route" {
     Name = "${var.routetable["public"]}"
   }
 }
-resource "aws_route_table" "windfire-private-route" {
-  vpc_id = "${aws_vpc.windfire-vpc.id}"
-  tags = {
-    Name = "${var.routetable["private"]}"
-  }
-}
 # Create Internet route access
 resource "aws_route" "windfire-internet-route" {
   route_table_id = "${aws_route_table.windfire-public-route.id}"
   destination_cidr_block = "${var.allIPsCIDRblock}"
   gateway_id = "${aws_internet_gateway.windfire-igw.id}"
-}
-# Create NAT route access
-resource "aws_route" "windfire-nat-route" {
-  route_table_id = "${aws_route_table.windfire-private-route.id}"
-  destination_cidr_block = "${var.allIPsCIDRblock}"
-  nat_gateway_id = "${aws_nat_gateway.windfire-ngw.id}"
 }
 # Create Subnets
 resource "aws_subnet" "windfire-frontend-subnet1" {
@@ -212,11 +188,11 @@ resource "aws_security_group" "windfire-frontend-securitygroup" {
 }
 resource "aws_security_group" "windfire-backend-securitygroup" {
   vpc_id = "${aws_vpc.windfire-vpc.id}"
-  # allow ingress HTTP port 8080 from Frontend Security Group
+  # allow ingress HTTP port 8082 from all IPs
   ingress {
-    security_groups = [ "${aws_security_group.windfire-frontend-securitygroup.id}" ]
-    from_port   = 8080
-    to_port     = 8080
+    cidr_blocks = [ "${var.allIPsCIDRblock}" ]
+    from_port   = 8082
+    to_port     = 8082
     protocol    = "tcp"
   }
   # allow ingress SSH port 22 from Bastion host subnet IPs
@@ -275,7 +251,7 @@ resource "aws_route_table_association" "windfire-bastion-association" {
 }
 resource "aws_route_table_association" "windfire-backend-association" {
   subnet_id = "${aws_subnet.windfire-backend-subnet1.id}"
-  route_table_id = "${aws_route_table.windfire-private-route.id}"
+  route_table_id = "${aws_route_table.windfire-public-route.id}"
 }
 #####################################################
 ################### End - AWS VPC ###################

@@ -44,15 +44,10 @@ variable "internet-gateway" {
   type = "string"
   default = "Windfire Internet Gateway"
 }
-variable "nat-gateway" {
-  type = "string"
-  default = "Windfire NAT Gateway"
-}
 variable "routetable" {
   type = "map"
   default = {
     "public" = "Windfire Public Route Table"
-    "private" = "Windfire Private Route Table"
   }
 }
 variable "instanceTenancy" {
