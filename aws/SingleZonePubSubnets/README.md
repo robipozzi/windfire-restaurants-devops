@@ -38,4 +38,4 @@ The following Terraform configuration files are used by the script to provision 
   Each EC2 instance is configured with a *key_name* attribute for SSH connection, whose value is configured in *variables.tf* and, by default, is set to **aws-key**, meaning that a Key Pair with that name must be previously have been created in AWS.
 * *variables.tf* - this file externalizes all the variables used by Terraform configurations
 
-Either Frontend and Backend subnets, although public ones, allow SSH connections coming from Bastion subnet (ingress SSH connections on port 22) only. The script [ssh-bastion.sh](../ssh-bastion.sh) is provided to SSH into private servers jumping through Bastion Host.
+Both Frontend and Backend subnets, although public ones, allow SSH connections coming from Bastion subnet only (ingress SSH connections on port 22). The script [ssh-bastion.sh](../ssh-bastion.sh) is provided to SSH into private servers jumping through Bastion Host.
