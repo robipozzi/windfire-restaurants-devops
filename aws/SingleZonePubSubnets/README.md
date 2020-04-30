@@ -11,13 +11,14 @@ The script requires 2 mandatory parameters:
 * **AWS API KEY** : this is the API Key ID which needs to be generated through AWS IAM service and associated with an AWS User with the appropriate authorizations.
 * **AWS API SECRET**: this is the API Secret associated with the API Key
 
-The script allows to use several optional parameters
-* Using no option will just provision the AWS infrastructure
-* Using **-f** option will do a Full Stack provisioning, that means the script will do the following steps:
+The script allows to use several optional parameters:
+* Using no option will provision the AWS infrastructure only, with no application deployed on it
+* Using **-f** option will do a Full Stack provisioning, which means the script will do the following steps:
     1. provision AWS infrastructure 
-    2. deploy *Windfire Restaurant UI* microservice, using the ![deploy.sh](https://github.com/robipozzi/windfire-restaurants-ui/blob/master/deploy.sh) script available in the root of https://github.com/robipozzi/windfire-restaurants-ui/blob/master/deploy.sh GitHub repository (for the full stack provisioning to work, )
-    3. deploy *Windfire Restaurant Backend* microservice, using the ![deploy.sh](https://github.com/robipozzi/windfire-restaurants-node/blob/master/deploy.sh) script available in the root of https://github.com/robipozzi/windfire-restaurants-node/blob/master/deploy.sh GitHub repository (for the full stack provisioning to work, )
-* Using **-d** option
+    2. deploy *Windfire Restaurant UI* microservice; you will first need to clone https://github.com/robipozzi/windfire-restaurants-ui GitHub repository to have the full stack provisioning work, since the **provision.sh** script will use the ![deploy.sh](https://github.com/robipozzi/windfire-restaurants-ui/blob/master/deploy.sh) script, available in the root of the repo, to automate deployment of the microservice.
+    3. deploy *Windfire Restaurant Backend* microservice; you will first need to clone https://github.com/robipozzi/windfire-restaurants-node GitHub repository to have the full stack provisioning work, since the **provision.sh** script will use the ![deploy.sh](https://github.com/robipozzi/windfire-restaurants-node/blob/master/deploy.sh) script, available in the root of the repo, to automate deployment of the microservice.
+* Using **-d** option will delete all the components of the AWS infrastructure
+* Using **-p** option will only show Terraform execution plan without applying it, basically allowing to test if everything is configured correctly before trying the actual infrastructure provisioning.
 
 The following Terraform configuration files are used by the script to provision all the different elements of AWS architecture:
 * *aws.tf* - Terraform configuration that defines AWS provider parameters used by all Terraform configurations
