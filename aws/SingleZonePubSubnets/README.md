@@ -8,8 +8,8 @@ The **provision.sh** script is provided to run Terraform *Infrastructure as Code
 ![](images/provision.png)
 
 The script requires 2 mandatory parameters: 
-    * **AWS API KEY** : this is the API Key ID which needs to be generated through AWS IAM service and associated with an AWS User with the appropriate authorizations.
-    * **AWS API SECRET**: this is the API Secret associated with the API Key
+* **AWS API KEY** : this is the API Key ID which needs to be generated through AWS IAM service and associated with an AWS User with the appropriate authorizations.
+* **AWS API SECRET**: this is the API Secret associated with the API Key
 
 The script 
     * 
