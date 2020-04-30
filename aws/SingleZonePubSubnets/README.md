@@ -3,10 +3,18 @@ The overall architecture created by applying the Terraform configurations provid
 
 ![](images/AWS-robipozzi_windfire-restaurants.png)
 
-The following files and scripts are provided to support AWS architecture provisioning using Terraform:
-* **provision.sh** - this script runs Terraform *Infrastructure as Code* configurations against AWS and requires 2 parameters: 
+The **provision.sh** script is provided to run Terraform *Infrastructure as Code* configurations against AWS, exposing several options, as can be seen in the following figure
+
+![](images/provision.png)
+
+The script requires 2 mandatory parameters: 
     * **AWS API KEY** : this is the API Key ID which needs to be generated through AWS IAM service and associated with an AWS User with the appropriate authorizations.
     * **AWS API SECRET**: this is the API Secret associated with the API Key
+
+The script 
+    * 
+
+The following Terraform configuration files are provided to support AWS architecture provisioning:
 * *aws.tf* - Terraform configuration that defines AWS provider parameters used by all Terraform configurations
 * *network.tf* - Terraform configuration that defines a Virtual Private Cloud and all related Network objects, allowing the creation of the following elements in AWS:
     * 1 VPC                 - it defines a VPC within an established AWS region and availability zone 
