@@ -12,12 +12,12 @@ The script requires 2 mandatory parameters:
 * **AWS API SECRET**: this is the API Secret associated with the API Key
 
 The script allows to use several optional parameters
-    * Using no option will just provision the AWS infrastructure
-    * Using **-f** option will do a Full Stack provisioning, that means the script will do the following steps:
-        1. provision AWS infrastructure 
-        2. deploy *Windfire Restaurant UI* microservice, using the ![deploy.sh](https://github.com/robipozzi/windfire-restaurants-ui/blob/master/deploy.sh) script available in the root of https://github.com/robipozzi/windfire-restaurants-ui/blob/master/deploy.sh GitHub repository (for the full stack provisioning to work, )
-        3. deploy *Windfire Restaurant Backend* microservice, using the ![deploy.sh](https://github.com/robipozzi/windfire-restaurants-node/blob/master/deploy.sh) script available in the root of https://github.com/robipozzi/windfire-restaurants-node/blob/master/deploy.sh GitHub repository (for the full stack provisioning to work, )
-    * Using **-f** option
+* Using no option will just provision the AWS infrastructure
+* Using **-f** option will do a Full Stack provisioning, that means the script will do the following steps:
+    1. provision AWS infrastructure 
+    2. deploy *Windfire Restaurant UI* microservice, using the ![deploy.sh](https://github.com/robipozzi/windfire-restaurants-ui/blob/master/deploy.sh) script available in the root of https://github.com/robipozzi/windfire-restaurants-ui/blob/master/deploy.sh GitHub repository (for the full stack provisioning to work, )
+    3. deploy *Windfire Restaurant Backend* microservice, using the ![deploy.sh](https://github.com/robipozzi/windfire-restaurants-node/blob/master/deploy.sh) script available in the root of https://github.com/robipozzi/windfire-restaurants-node/blob/master/deploy.sh GitHub repository (for the full stack provisioning to work, )
+* Using **-d** option
 
 The following Terraform configuration files are used by the script to provision all the different elements of AWS architecture:
 * *aws.tf* - Terraform configuration that defines AWS provider parameters used by all Terraform configurations
