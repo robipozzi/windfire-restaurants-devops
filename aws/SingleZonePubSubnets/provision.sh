@@ -35,9 +35,10 @@ runTerraform()
 	echo "############## Run Terraform automation ##############"
 	echo "######################################################"
     
+    SOURCE_IP=$(curl ipecho.net/plain ; echo)
+    export TF_VAR_source_ip=$SOURCE_IP/32
     export TF_VAR_aws_access_key=$AWS_ACCESS_KEY
     export TF_VAR_aws_secret_key=$AWS_SECRET_KEY
-	EXTERNAL_IP=$(curl ipecho.net/plain ; echo)
 	case $TERRAFORM_MODE in
         plan )	    echo ${cyn}Generating and showing Terraform plan ...${end}
                     terraform plan
@@ -47,11 +48,11 @@ runTerraform()
         fullstack ) echo ${cyn}Running Full stack deployment automation ...${end}
                     applyTerraform
                     echo ${cyn}Windfire Restaurants UI microservice deployment automation ...${end}
-                    cd ../../windfire-restaurants-ui/
-                    ./deploy.sh 4
+                    cd ../../../windfire-restaurants-ui/
+                    ./deploy.sh 3
                     echo ${cyn}Windfire Restaurants Backend microservice deployment automation ...${end}
                     cd $WORKING_DIR
-                    cd ../../windfire-restaurants-node/
+                    cd ../../../windfire-restaurants-node/
                     ./deploy.sh 2
                     ;;
         destroy )	echo ${cyn}Destroying Terraform managed infrastructure ...${end}

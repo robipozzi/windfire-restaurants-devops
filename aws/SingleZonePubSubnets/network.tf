@@ -43,6 +43,7 @@ resource "aws_subnet" "windfire-frontend-subnet1" {
 resource "aws_subnet" "windfire-backend-subnet1" {
   vpc_id = "${aws_vpc.windfire-vpc.id}"
   cidr_block = "${var.cidr["backend"]}"
+  map_public_ip_on_launch = "${var.mapPublicIP}"
   availability_zone = "${var.availabilityZone}"
   tags = {
     Name = "${var.subnet["backend"]}"
@@ -111,12 +112,12 @@ resource "aws_network_acl" "windfire-backend-acl" {
 resource "aws_network_acl" "windfire-bastion-acl" {
   vpc_id = "${aws_vpc.windfire-vpc.id}"
   subnet_ids = [ "${aws_subnet.windfire-bastion-subnet.id}" ]
-  # allow ingress SSH port 22 from all IPs
+  # allow ingress SSH port 22 from User Source IP
   ingress {
     protocol   = "tcp"
     rule_no    = 100
     action     = "allow"
-    cidr_block = "${var.allIPsCIDRblock}"
+    cidr_block = "${var.source_ip}"
     from_port  = 22
     to_port    = 22
   }
@@ -215,9 +216,9 @@ resource "aws_security_group" "windfire-backend-securitygroup" {
 }
 resource "aws_security_group" "windfire-bastion-securitygroup" {
   vpc_id = "${aws_vpc.windfire-vpc.id}"
-  # allow ingress SSH port 22 from all IPs
+  # allow ingress SSH port 22 from User source IP
   ingress {
-    cidr_blocks = [ "${var.allIPsCIDRblock}" ]
+    cidr_blocks = [ "${var.source_ip}" ]
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"

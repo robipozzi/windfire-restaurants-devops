@@ -39,3 +39,5 @@ The following Terraform configuration files are used by the script to provision 
 * *variables.tf* - this file externalizes all the variables used by Terraform configurations
 
 Both Frontend and Backend subnets, although public ones, allow SSH connections coming from Bastion subnet only (ingress SSH connections on port 22). The script [ssh-bastion.sh](../ssh-bastion.sh) is provided to SSH into private servers jumping through Bastion Host.
+
+The Bastion Security Group is configured to allow SSH connection only from your workstation IP.
