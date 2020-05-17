@@ -2,5 +2,5 @@ aws/.terraform
 *.tfstate
 *.tfstate.backup
 *.tfvars.NOTUSED
-aws/SingleZonePubSubnets/.terraform/plugins/darwin_amd64/lock.json
-aws/SingleZonePubSubnets/.terraform/plugins/darwin_amd64/terraform-provider-aws_v2.60.0_x4
+aws/MultiZone/.terraform/plugins/darwin_amd64/terraform-provider-aws_v2.61.0_x4
+aws/SingleZone/.terraform/plugins/darwin_amd64/terraform-provider-aws_v2.60.0_x4
