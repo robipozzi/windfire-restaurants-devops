@@ -5,7 +5,7 @@ resource "aws_instance" "windfire-web" {
   ami = "ami-03ab4e8f1d88ce614"
   instance_type = "t2.micro"
   security_groups = [ "${aws_security_group.windfire-frontend-securitygroup.id}" ]
-  subnet_id = "${aws_subnet.windfire-frontend-subnet1.id}"
+  subnet_id = "${aws_subnet.windfire-frontend-subnet.id}"
   key_name = "${var.key_name}"
   # Run install-httpd.sh script, provided in scripts sub-folder, at EC2 instance launch time
   user_data = "${file("scripts/install-httpd.sh")}"
@@ -18,7 +18,7 @@ resource "aws_instance" "windfire-backend" {
   ami = "ami-03ab4e8f1d88ce614"
   instance_type = "t2.micro"
   security_groups = [ "${aws_security_group.windfire-backend-securitygroup.id}" ]
-  subnet_id = "${aws_subnet.windfire-backend-subnet1.id}"
+  subnet_id = "${aws_subnet.windfire-backend-subnet.id}"
   key_name = "${var.key_name}"
   # Run install-node.sh script, provided in scripts sub-folder, at EC2 instance launch time
   user_data = "${file("scripts/install-node.sh")}"

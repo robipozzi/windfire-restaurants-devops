@@ -31,7 +31,7 @@ resource "aws_route" "windfire-internet-route" {
   gateway_id = "${aws_internet_gateway.windfire-igw.id}"
 }
 # Create Subnets
-resource "aws_subnet" "windfire-frontend-subnet1" {
+resource "aws_subnet" "windfire-frontend-subnet" {
   vpc_id = "${aws_vpc.windfire-vpc.id}"
   cidr_block = "${var.cidr["frontend"]}"
   map_public_ip_on_launch = "${var.mapPublicIP}"
@@ -40,7 +40,7 @@ resource "aws_subnet" "windfire-frontend-subnet1" {
     Name = "${var.subnet["frontend"]}"
   }
 }
-resource "aws_subnet" "windfire-backend-subnet1" {
+resource "aws_subnet" "windfire-backend-subnet" {
   vpc_id = "${aws_vpc.windfire-vpc.id}"
   cidr_block = "${var.cidr["backend"]}"
   map_public_ip_on_launch = "${var.mapPublicIP}"
@@ -61,7 +61,7 @@ resource "aws_subnet" "windfire-bastion-subnet" {
 # Create Network Access Control Lists
 resource "aws_network_acl" "windfire-frontend-acl" {
   vpc_id = "${aws_vpc.windfire-vpc.id}"
-  subnet_ids = [ "${aws_subnet.windfire-frontend-subnet1.id}" ]
+  subnet_ids = [ "${aws_subnet.windfire-frontend-subnet.id}" ]
   # allow ingress ephemeral ports from all IPs
   ingress {
     protocol   = "tcp"
@@ -86,7 +86,7 @@ resource "aws_network_acl" "windfire-frontend-acl" {
 }
 resource "aws_network_acl" "windfire-backend-acl" {
   vpc_id = "${aws_vpc.windfire-vpc.id}"
-  subnet_ids = [ "${aws_subnet.windfire-backend-subnet1.id}" ]
+  subnet_ids = [ "${aws_subnet.windfire-backend-subnet.id}" ]
   # allow ingress ephemeral ports from all IPs
   ingress {
     protocol   = "tcp"
@@ -243,7 +243,7 @@ resource "aws_security_group" "windfire-bastion-securitygroup" {
 }
 # Associate Route Tables with Subnets
 resource "aws_route_table_association" "windfire-frontend-association" {
-  subnet_id = "${aws_subnet.windfire-frontend-subnet1.id}"
+  subnet_id = "${aws_subnet.windfire-frontend-subnet.id}"
   route_table_id = "${aws_route_table.windfire-public-route.id}"
 }
 resource "aws_route_table_association" "windfire-bastion-association" {
@@ -251,7 +251,7 @@ resource "aws_route_table_association" "windfire-bastion-association" {
   route_table_id = "${aws_route_table.windfire-public-route.id}"
 }
 resource "aws_route_table_association" "windfire-backend-association" {
-  subnet_id = "${aws_subnet.windfire-backend-subnet1.id}"
+  subnet_id = "${aws_subnet.windfire-backend-subnet.id}"
   route_table_id = "${aws_route_table.windfire-public-route.id}"
 }
 #####################################################

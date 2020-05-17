@@ -18,8 +18,8 @@ variable "vpc" {
 variable "subnet" {
   type = "map"
   default = {
-    "frontend" = "Windfire Frontend subnet 1"
-    "backend" = "Windfire Backend subnet 1"
+    "frontend" = "Windfire Frontend subnet"
+    "backend" = "Windfire Backend subnet"
     "bastion" = "Windfire Bastion subnet "
   }
 }
