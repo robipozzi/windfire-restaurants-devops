@@ -48,11 +48,11 @@ runTerraform()
                     applyTerraform
                     echo ${cyn}Windfire Restaurants UI microservice deployment automation ...${end}
                     cd ../../windfire-restaurants-ui/
-                    ./deploy.sh 4
+                    ./deploy.sh 4 $AWS_ACCESS_KEY $AWS_SECRET_KEY
                     echo ${cyn}Windfire Restaurants Backend microservice deployment automation ...${end}
                     cd $WORKING_DIR
                     cd ../../windfire-restaurants-node/
-                    ./deploy.sh 2
+                    ./deploy.sh 3 $AWS_ACCESS_KEY $AWS_SECRET_KEY
                     ;;
         destroy )	echo ${cyn}Destroying Terraform managed infrastructure ...${end}
                     terraform destroy -auto-approve
