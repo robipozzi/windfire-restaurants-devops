@@ -1,4 +1,4 @@
-source ../../../setenv.sh
+source ../../setenv.sh
 
 ###### Variable section - START
 SCRIPT=provision.sh

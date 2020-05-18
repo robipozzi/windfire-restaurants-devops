@@ -74,7 +74,6 @@ variable "cidr" {
   default = {
     "vpc" = "10.0.0.0/16"
     "bastion" = "10.0.0.0/28"
-    "public" = "10.0.1.0/28"
   }
 }
 variable "allIPsCIDRblock" {
