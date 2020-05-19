@@ -8,7 +8,7 @@ The *Windfire Restaurants* management application is composed by the following m
 
 The application can be deployed on different target architectures, see the following for details
 
-* [Windfire Restaurants - AWS Single Zone Architecture with publicly accessible subnets](aws/SingleZone/README.md)
+* [Windfire Restaurants - AWS Single Zone Architecture](aws/SingleZone/README.md)
 * [Windfire Restaurants - AWS Multi Zone Architecture](aws/MultiZone/README.md)
 
 More architecture targets will be added and documented.

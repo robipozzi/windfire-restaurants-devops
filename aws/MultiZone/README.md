@@ -27,13 +27,14 @@ The following Terraform configuration files are used by the script to provision 
                               (by default they are AZ 'eu-central-1a' within 'eu-central-1' region)
     * 1 Internet Gateway    - it defines an Internet Gateway to allow egress to the Internet
     * 1 Route Table         - 1 Route Table for public route is defined and associated to the 3 Subnets 
-    * 3 Subnets             - they are defined within the Availability zone: 1 Frontend subnet, 1 Backend subnet and 1 Management Subnet for Bastion Host. Frontend subnet only allows HTTP/HTTPS ingress, Backend subnet only allow HTTP ingress on port 8082, Management Subnet only allows SSH ingress on port 22. 
+    * 1 Application Load Balancer - it balances the load between 
+    * 3 Subnets             - they are defined within each Availability zone: 1 Frontend subnet, 1 Backend subnet and 1 Management Subnet for Bastion Host. Frontend subnets only allows HTTP/HTTPS ingress from the Application Load Balancer security group, such as Backend subnets that only allow HTTP ingress on port 8082, Management Subnet only allows SSH ingress on port 22. 
     * 3 NACLs               - each Network ACL is defined for and associated to one subnet
-    * 3 Security Groups     - Security Groups are defined for server roles, 1 for Web Servers, 1 for Backend Servers and 1 for the Bastion Host 
+    * 4 Security Groups     - Security Groups are defined for the Application Load Balancer and for each server roles, 1 for Web Servers, 1 for Backend Servers and 1 for the Bastion Host 
 * *ec2.tf* - Terraform configuration that creates 3 EC2 instances:
     * 1 Bastion Host in Bastion subnet, associated to the related Network ACL and Security Group
-    * 1 Web Server in Frontend subnet, associated to the related Network ACL and Security Group
-    * 1 Backend Server in Backend subnet, associated to the related Network ACL and Security Group
+    * 1 Web Server in Frontend subnets (one for each availability zone), associated to the related Network ACL and Security Group
+    * 1 Backend Server in Backend subnets (one for each availability zone), associated to the related Network ACL and Security Group
   
   Each EC2 instance is configured with a *key_name* attribute for SSH connection, whose value is configured in *variables.tf* and, by default, is set to **aws-key**, meaning that a Key Pair with that name must be previously have been created in AWS.
 * *variables.tf* - this file externalizes all the variables used by Terraform configurations
