@@ -27,7 +27,8 @@ The following Terraform configuration files are used by the script to provision 
                               (by default they are AZ 'eu-central-1a' within 'eu-central-1' region)
     * 1 Internet Gateway    - it defines an Internet Gateway to allow egress to the Internet
     * 1 Route Table         - 1 Route Table for public route is defined and associated to the 3 Subnets 
-    * 1 Application Load Balancer - it balances the load between 
+    * 1 Application Load Balancer - it balances the load between Web Server and Backend Server Target Groups
+    * 2 Target Groups       - they group together Web Servers and Backend Servers to allow load balancing
     * 3 Subnets             - they are defined within each Availability zone: 1 Frontend subnet, 1 Backend subnet and 1 Management Subnet for Bastion Host. Frontend subnets only allows HTTP/HTTPS ingress from the Application Load Balancer security group, such as Backend subnets that only allow HTTP ingress on port 8082, Management Subnet only allows SSH ingress on port 22. 
     * 3 NACLs               - each Network ACL is defined for and associated to one subnet
     * 4 Security Groups     - Security Groups are defined for the Application Load Balancer and for each server roles, 1 for Web Servers, 1 for Backend Servers and 1 for the Bastion Host 
