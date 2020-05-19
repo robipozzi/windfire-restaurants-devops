@@ -3,7 +3,7 @@ The overall architecture created by applying the Terraform configurations provid
 
 ![](images/AWS-robipozzi_windfire-restaurants.png)
 
-The [**provision.sh**](provision.sh)script is provided to run Terraform *Infrastructure as Code* configurations against AWS, exposing several options, as can be seen in the following figure
+The [**provision.sh**](provision.sh) script is provided to run Terraform *Infrastructure as Code* configurations against AWS, exposing several options, as can be seen in the following figure
 
 ![](images/provision.png)
 
