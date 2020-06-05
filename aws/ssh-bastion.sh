@@ -34,6 +34,7 @@ runSSH()
     echo ${cyn}Adding $SSH_KEY ssh key to keychain ...${end}
     ssh-add -k $HOME/.ssh/$SSH_KEY
     SSH_COMMAND="ssh -J $USER@$BASTION_HOST_PUBLIC_IP $USER@$HOST_PRIVATE_IP"
+    #ssh -i $HOME/.ssh/$SSH_KEY $USER@$HOST_PRIVATE_IP -o "proxycommand ssh -W %h:%p -i $HOME/.ssh/$SSH_KEY $USER@$BASTION_HOST_PUBLIC_I"
     echo ${cyn}ssh into target host through Bastion host ...${end}
     echo Using following command : ${cyn}$SSH_COMMAND ...${end}
     $SSH_COMMAND
