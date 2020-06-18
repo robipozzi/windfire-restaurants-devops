@@ -3,7 +3,7 @@
 #######################################################
 resource "aws_instance" "windfire-web" {
   count           = var.azs
-  ami             = "ami-03ab4e8f1d88ce614"
+  ami             = var.ami
   instance_type   = "t2.micro"
   security_groups = [aws_security_group.windfire-frontend-sg.id]
   subnet_id       = element(aws_subnet.windfire-frontend-subnet.*.id, count.index)
@@ -19,7 +19,7 @@ resource "aws_instance" "windfire-web" {
 
 resource "aws_instance" "windfire-backend" {
   count           = var.azs
-  ami             = "ami-03ab4e8f1d88ce614"
+  ami             = var.ami
   instance_type   = "t2.micro"
   security_groups = [aws_security_group.windfire-backend-sg.id]
   subnet_id       = element(aws_subnet.windfire-backend-subnet.*.id, count.index)
@@ -34,7 +34,7 @@ resource "aws_instance" "windfire-backend" {
 }
 
 resource "aws_instance" "bastion" {
-  ami             = "ami-03ab4e8f1d88ce614"
+  ami             = var.ami
   instance_type   = "t2.micro"
   security_groups = [aws_security_group.windfire-bastion-sg.id]
   subnet_id       = aws_subnet.windfire-bastion-subnet.id
@@ -44,7 +44,6 @@ resource "aws_instance" "bastion" {
     Role = "bastion"
   }
 }
-
 #####################################################
 ################### End - AWS EC2 ###################
 #####################################################

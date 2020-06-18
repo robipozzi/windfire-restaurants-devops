@@ -5,12 +5,12 @@ variable "aws_secret_key" {
 }
 
 variable "aws_region" {
-  default     = "eu-central-1"
+  default     = "us-east-1"
   description = "One of us-east-2, us-east-1, us-west-1, us-west-2, ap-south-1, ap-northeast-2, ap-southeast-1, ap-southeast-2, ap-northeast-1, us-west-2, eu-central-1, eu-west-1, eu-west-2, eu-west-2, eu-north-1, sa-east-1"
 }
 
 variable "availabilityZone" {
-  default = "eu-central-1a"
+  default = "us-east-1a"
 }
 
 ###################################################################################
@@ -101,16 +101,20 @@ variable "allIPsCIDRblock" {
 variable "mapPublicIP" {
   default = true
 }
-
 #################################################################################
 ################### End - AWS Network configuration variables ###################
 #################################################################################
 #=============================================================================
 #================== Start - AWS EC2 configuration variables ==================
 #=============================================================================
+variable "ami" {
+  type    = string
+  default = "ami-09d95fab7fff3776c"
+}
+
 variable "key_name" {
   type    = string
-  default = "aws-key"
+  default = "windfire-aws-key"
 }
 
 variable "ssh_user" {
@@ -121,11 +125,10 @@ variable "ssh_user" {
 variable "keypair" {
   type = map(string)
   default = {
-    "key_name"  = "windfire-key"
-    "publickey" = "windfire-key.pub"
+    "key_name"  = "windfire-aws-key"
+    "publickey" = "windfire-aws-key.pub"
   }
 }
-
 #===========================================================================
 #================== End - AWS EC2 configuration variables ==================
 #===========================================================================

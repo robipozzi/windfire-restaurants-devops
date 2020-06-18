@@ -2,7 +2,7 @@
 ################### Start - AWS EC2 ###################
 #######################################################
 resource "aws_instance" "windfire-web" {
-  ami             = "ami-03ab4e8f1d88ce614"
+  ami             = var.ami
   instance_type   = "t2.micro"
   security_groups = [aws_security_group.windfire-frontend-securitygroup.id]
   subnet_id       = aws_subnet.windfire-frontend-subnet.id
@@ -17,7 +17,7 @@ resource "aws_instance" "windfire-web" {
 }
 
 resource "aws_instance" "windfire-backend" {
-  ami             = "ami-03ab4e8f1d88ce614"
+  ami             = var.ami
   instance_type   = "t2.micro"
   security_groups = [aws_security_group.windfire-backend-securitygroup.id]
   subnet_id       = aws_subnet.windfire-backend-subnet.id
@@ -32,7 +32,7 @@ resource "aws_instance" "windfire-backend" {
 }
 
 resource "aws_instance" "bastion" {
-  ami             = "ami-03ab4e8f1d88ce614"
+  ami             = var.ami
   instance_type   = "t2.micro"
   security_groups = [aws_security_group.windfire-bastion-securitygroup.id]
   subnet_id       = aws_subnet.windfire-bastion-subnet.id
@@ -42,7 +42,6 @@ resource "aws_instance" "bastion" {
     Role = "bastion"
   }
 }
-
 #####################################################
 ################### End - AWS EC2 ###################
 #####################################################
