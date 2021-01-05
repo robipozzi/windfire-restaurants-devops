@@ -14,12 +14,12 @@ resource "aws_vpc" "windfire-vpc" {
   }
 }
 
-# Create Internet Facing ALB
+# Create Internet Facing Frontend ALB
 resource "aws_lb" "windfire-frontend-alb" {
   name               = "windfire-frontend-alb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.windfire-alb-sg.id]
+  security_groups    = [aws_security_group.windfire-frontend-alb-sg.id]
   subnets            = aws_subnet.windfire-frontend-subnet.*.id
   tags = {
     Environment = "production"
@@ -51,9 +51,21 @@ resource "aws_lb_target_group_attachment" "windfire-frontend-tg_attach" {
   port             = 80
 }
 
+# Create Internet Facing Backend ALB
+resource "aws_lb" "windfire-backend-alb" {
+  name               = "windfire-backend-alb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.windfire-backend-alb-sg.id]
+  subnets            = aws_subnet.windfire-backend-subnet.*.id
+  tags = {
+    Environment = "production"
+  }
+}
+
 # ALB Configuration for Backend Target Group
 resource "aws_lb_listener" "windfire-backend-listener" {
-  load_balancer_arn = aws_lb.windfire-frontend-alb.arn
+  load_balancer_arn = aws_lb.windfire-backend-alb.arn
   port              = "8082"
   protocol          = "HTTP"
   default_action {
@@ -228,7 +240,7 @@ resource "aws_network_acl" "windfire-bastion-acl" {
 }
 
 # Create Security Groups
-resource "aws_security_group" "windfire-alb-sg" {
+resource "aws_security_group" "windfire-frontend-alb-sg" {
   vpc_id = aws_vpc.windfire-vpc.id
 
   # allow ingress HTTP port 80 from all IPs
@@ -247,24 +259,8 @@ resource "aws_security_group" "windfire-alb-sg" {
     protocol    = "tcp"
   }
 
-  # allow ingress HTTP port 8082 from all IPs
-  ingress {
-    cidr_blocks = [var.allIPsCIDRblock]
-    from_port   = 8082
-    to_port     = 8082
-    protocol    = "tcp"
-  }
-
   # allow egress HTTP port 80 to VPC CIDR
   egress {
-    # TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
-    # force an interpolation expression to be interpreted as a list by wrapping it
-    # in an extra set of list brackets. That form was supported for compatibility in
-    # v0.11, but is no longer supported in Terraform v0.12.
-    #
-    # If the expression in the following list itself returns a list, remove the
-    # brackets to avoid interpretation as a list of lists. If the expression
-    # returns a single list item then leave it as-is and remove this TODO comment.
     cidr_blocks = [var.cidr["vpc"]]
     from_port   = 80
     to_port     = 80
@@ -273,37 +269,37 @@ resource "aws_security_group" "windfire-alb-sg" {
 
   # allow egress HTTPS port 443 to VPC CIDR
   egress {
-    # TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
-    # force an interpolation expression to be interpreted as a list by wrapping it
-    # in an extra set of list brackets. That form was supported for compatibility in
-    # v0.11, but is no longer supported in Terraform v0.12.
-    #
-    # If the expression in the following list itself returns a list, remove the
-    # brackets to avoid interpretation as a list of lists. If the expression
-    # returns a single list item then leave it as-is and remove this TODO comment.
     cidr_blocks = [var.cidr["vpc"]]
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
   }
 
+  tags = {
+    Name = var.security-group["frontend-alb"]
+  }
+}
+
+resource "aws_security_group" "windfire-backend-alb-sg" {
+  vpc_id = aws_vpc.windfire-vpc.id
+
+  # allow ingress HTTP port 8082 from all IPs
+  ingress {
+    cidr_blocks = [var.allIPsCIDRblock]
+    from_port   = 8082
+    to_port     = 8082
+    protocol    = "tcp"
+  }
+
   # allow egress HTTP port 8082 to VPC CIDR
   egress {
-    # TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
-    # force an interpolation expression to be interpreted as a list by wrapping it
-    # in an extra set of list brackets. That form was supported for compatibility in
-    # v0.11, but is no longer supported in Terraform v0.12.
-    #
-    # If the expression in the following list itself returns a list, remove the
-    # brackets to avoid interpretation as a list of lists. If the expression
-    # returns a single list item then leave it as-is and remove this TODO comment.
     cidr_blocks = [var.cidr["vpc"]]
     from_port   = 8082
     to_port     = 8082
     protocol    = "tcp"
   }
   tags = {
-    Name = var.security-group["alb"]
+    Name = var.security-group["backend-alb"]
   }
 }
 
@@ -312,7 +308,7 @@ resource "aws_security_group" "windfire-frontend-sg" {
 
   # allow ingress HTTP port 80 from ALB Security Group
   ingress {
-    security_groups = [aws_security_group.windfire-alb-sg.id]
+    security_groups = [aws_security_group.windfire-frontend-alb-sg.id]
     from_port       = 80
     to_port         = 80
     protocol        = "tcp"
@@ -320,7 +316,7 @@ resource "aws_security_group" "windfire-frontend-sg" {
 
   # allow ingress HTTPS port 443 from ALB Security Group
   ingress {
-    security_groups = [aws_security_group.windfire-alb-sg.id]
+    security_groups = [aws_security_group.windfire-frontend-alb-sg.id]
     from_port       = 443
     to_port         = 443
     protocol        = "tcp"
@@ -328,14 +324,6 @@ resource "aws_security_group" "windfire-frontend-sg" {
 
   # allow ingress SSH port 22 from Bastion host subnet IPs
   ingress {
-    # TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
-    # force an interpolation expression to be interpreted as a list by wrapping it
-    # in an extra set of list brackets. That form was supported for compatibility in
-    # v0.11, but is no longer supported in Terraform v0.12.
-    #
-    # If the expression in the following list itself returns a list, remove the
-    # brackets to avoid interpretation as a list of lists. If the expression
-    # returns a single list item then leave it as-is and remove this TODO comment.
     cidr_blocks = [var.cidr["bastion"]]
     from_port   = 22
     to_port     = 22
@@ -359,7 +347,7 @@ resource "aws_security_group" "windfire-backend-sg" {
 
   # allow ingress HTTP port 8082 from ALB Security Group
   ingress {
-    security_groups = [aws_security_group.windfire-alb-sg.id]
+    security_groups = [aws_security_group.windfire-backend-alb-sg.id]
     from_port       = 8082
     to_port         = 8082
     protocol        = "tcp"
@@ -367,14 +355,6 @@ resource "aws_security_group" "windfire-backend-sg" {
 
   # allow ingress SSH port 22 from Bastion host subnet IPs
   ingress {
-    # TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
-    # force an interpolation expression to be interpreted as a list by wrapping it
-    # in an extra set of list brackets. That form was supported for compatibility in
-    # v0.11, but is no longer supported in Terraform v0.12.
-    #
-    # If the expression in the following list itself returns a list, remove the
-    # brackets to avoid interpretation as a list of lists. If the expression
-    # returns a single list item then leave it as-is and remove this TODO comment.
     cidr_blocks = [var.cidr["bastion"]]
     from_port   = 22
     to_port     = 22
@@ -398,7 +378,7 @@ resource "aws_security_group" "windfire-bastion-sg" {
 
   # allow ingress SSH port 22 from all IPs
   ingress {
-    cidr_blocks = [var.allIPsCIDRblock]
+    cidr_blocks = [var.source_ip]
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"

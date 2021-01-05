@@ -4,6 +4,9 @@ variable "aws_access_key" {
 variable "aws_secret_key" {
 }
 
+variable "source_ip" {
+}
+
 variable "aws_region" {
   default     = "us-east-1"
   description = "One of us-east-2, us-east-1, us-west-1, us-west-2, ap-south-1, ap-northeast-2, ap-southeast-1, ap-southeast-2, ap-northeast-1, us-west-2, eu-central-1, eu-west-1, eu-west-2, eu-west-2, eu-north-1, sa-east-1"
@@ -48,11 +51,12 @@ variable "acl" {
 variable "security-group" {
   type = map(string)
   default = {
-    "alb"      = "Windfire ALN Security Group"
-    "frontend" = "Windfire Frontend Security Group"
-    "backend"  = "Windfire Backend Security Group"
-    "bastion"  = "Windfire Bastion Security Group"
-    "public"   = "Windfire Public Security Group"
+    "frontend-alb"  = "Windfire Frontend ALB Security Group"
+    "backend-alb"   = "Windfire Backend ALB Security Group"
+    "frontend"      = "Windfire Frontend Security Group"
+    "backend"       = "Windfire Backend Security Group"
+    "bastion"       = "Windfire Bastion Security Group"
+    "public"        = "Windfire Public Security Group"
   }
 }
 

@@ -1,7 +1,9 @@
 #######################################################
 ################### Start - AWS VPC ###################
 #######################################################
-data "aws_availability_zones" "available" {}
+data "aws_availability_zones" "available" {
+}
+
 resource "aws_vpc" "windfire-vpc" {
   cidr_block = "${var.cidr["vpc"]}"
   instance_tenancy = "${var.instanceTenancy}"
@@ -11,9 +13,10 @@ resource "aws_vpc" "windfire-vpc" {
     Name = "${var.vpc}"
   }
 }
-# Create ALB
-resource "aws_lb" "windfire-frontend-alb" {
-  name = "windfire-frontend-alb"
+
+# Create Internet Facing ALB
+resource "aws_lb" "windfire-alb" {
+  name = "windfire-alb"
   internal = false
   load_balancer_type = "application"
   security_groups = ["${aws_security_group.windfire-alb-sg.id}"]
@@ -23,9 +26,10 @@ resource "aws_lb" "windfire-frontend-alb" {
     Environment = "production"
   }
 }
+
 # ALB Configuration for Frontend Target Group
 resource "aws_lb_listener" "windfire-frontend-listener" {
-  load_balancer_arn = "${aws_lb.windfire-frontend-alb.arn}"
+  load_balancer_arn = "${aws_lb.windfire-alb.arn}"
   port = "80"
   protocol = "HTTP"
   default_action {
@@ -33,21 +37,24 @@ resource "aws_lb_listener" "windfire-frontend-listener" {
     target_group_arn = "${aws_lb_target_group.windfire-frontend-tg.arn}"
   }
 }
+
 resource "aws_lb_target_group" "windfire-frontend-tg" {
   name = "windfire-frontend-tg"
   port = 80
   protocol = "HTTP"
   vpc_id = "${aws_vpc.windfire-vpc.id}"
 }
+
 resource "aws_lb_target_group_attachment" "windfire-frontend-tg_attach" {
   count = "${var.count}"
   target_group_arn = "${aws_lb_target_group.windfire-frontend-tg.arn}"
   target_id = "${element(aws_instance.windfire-web.*.id, count.index)}"
   port = 80
 }
+
 # ALB Configuration for Backend Target Group
 resource "aws_lb_listener" "windfire-backend-listener" {
-  load_balancer_arn = "${aws_lb.windfire-frontend-alb.arn}"
+  load_balancer_arn = "${aws_lb.windfire-alb.arn}"
   port = "8082"
   protocol = "HTTP"
   default_action {
@@ -55,18 +62,21 @@ resource "aws_lb_listener" "windfire-backend-listener" {
     target_group_arn = "${aws_lb_target_group.windfire-backend-tg.arn}"
   }
 }
+
 resource "aws_lb_target_group" "windfire-backend-tg" {
   name = "windfire-backend-tg"
   port = 8082
   protocol = "HTTP"
   vpc_id = "${aws_vpc.windfire-vpc.id}"
 }
+
 resource "aws_lb_target_group_attachment" "windfire-backend-tg_attach" {
   count = "${var.count}"
   target_group_arn = "${aws_lb_target_group.windfire-backend-tg.arn}"
   target_id = "${element(aws_instance.windfire-backend.*.id, count.index)}"
   port = 8082
 }
+
 # Create Internet Gateway
 resource "aws_internet_gateway" "windfire-igw" {
   vpc_id = "${aws_vpc.windfire-vpc.id}"
@@ -74,10 +84,12 @@ resource "aws_internet_gateway" "windfire-igw" {
     Name = "${var.internet-gateway}"
   }
 }
+
 # Create NAT Gateway
 resource "aws_eip" "windfire-nat-eip" {
   vpc = true
 }
+
 resource "aws_nat_gateway" "windfire-ngw" {
   allocation_id = "${aws_eip.windfire-nat-eip.id}"
   subnet_id = "${aws_subnet.windfire-bastion-subnet.id}"
@@ -86,6 +98,7 @@ resource "aws_nat_gateway" "windfire-ngw" {
   }
   depends_on = ["aws_internet_gateway.windfire-igw"]
 }
+
 # Create Route Tables
 resource "aws_route_table" "windfire-public-route" {
   vpc_id = "${aws_vpc.windfire-vpc.id}"
@@ -93,24 +106,28 @@ resource "aws_route_table" "windfire-public-route" {
     Name = "${var.routetable["public"]}"
   }
 }
+
 resource "aws_route_table" "windfire-private-route" {
   vpc_id = "${aws_vpc.windfire-vpc.id}"
   tags = {
     Name = "${var.routetable["private"]}"
   }
 }
+
 # Create Internet route access
 resource "aws_route" "windfire-internet-route" {
   route_table_id = "${aws_route_table.windfire-public-route.id}"
   destination_cidr_block = "${var.allIPsCIDRblock}"
   gateway_id = "${aws_internet_gateway.windfire-igw.id}"
 }
+
 # Create NAT route access
 resource "aws_route" "windfire-nat-route" {
   route_table_id = "${aws_route_table.windfire-private-route.id}"
   destination_cidr_block = "${var.allIPsCIDRblock}"
   nat_gateway_id = "${aws_nat_gateway.windfire-ngw.id}"
 }
+
 # Create Subnets
 /*resource "aws_subnet" "windfire-public-subnet" {
   count = "${var.count}"
@@ -122,6 +139,7 @@ resource "aws_route" "windfire-nat-route" {
     Name = "${var.subnet["public"]}"
   }
 }*/
+
 resource "aws_subnet" "windfire-frontend-subnet" {
   count = "${var.count}"
   vpc_id = "${aws_vpc.windfire-vpc.id}"
@@ -132,6 +150,7 @@ resource "aws_subnet" "windfire-frontend-subnet" {
     Name = "${var.subnet["frontend"]}"
   }
 }
+
 resource "aws_subnet" "windfire-backend-subnet" {
   count = "${var.count}"
   vpc_id = "${aws_vpc.windfire-vpc.id}"
@@ -142,6 +161,7 @@ resource "aws_subnet" "windfire-backend-subnet" {
     Name = "${var.subnet["backend"]}"
   }
 }
+
 resource "aws_subnet" "windfire-bastion-subnet" {
   vpc_id = "${aws_vpc.windfire-vpc.id}"
   cidr_block = "${var.cidr["bastion"]}"
@@ -151,6 +171,7 @@ resource "aws_subnet" "windfire-bastion-subnet" {
     Name = "${var.subnet["bastion"]}"
   }
 }
+
 # Create Network Access Control Lists
 /*resource "aws_network_acl" "windfire-public-acl" {
   vpc_id = "${aws_vpc.windfire-vpc.id}"
@@ -177,6 +198,7 @@ resource "aws_subnet" "windfire-bastion-subnet" {
     Name = "${var.acl["public"]}"
   }
 }*/
+
 resource "aws_network_acl" "windfire-frontend-acl" {
   vpc_id = "${aws_vpc.windfire-vpc.id}"
   subnet_ids = [ "${aws_subnet.windfire-frontend-subnet.*.id}" ]
@@ -202,6 +224,7 @@ resource "aws_network_acl" "windfire-frontend-acl" {
     Name = "${var.acl["public"]}"
   }
 }
+
 resource "aws_network_acl" "windfire-backend-acl" {
   vpc_id = "${aws_vpc.windfire-vpc.id}"
   subnet_ids = [ "${aws_subnet.windfire-backend-subnet.*.id}" ]
@@ -227,6 +250,7 @@ resource "aws_network_acl" "windfire-backend-acl" {
     Name = "${var.acl["private"]}"
   }
 }
+
 resource "aws_network_acl" "windfire-bastion-acl" {
   vpc_id = "${aws_vpc.windfire-vpc.id}"
   subnet_ids = [ "${aws_subnet.windfire-bastion-subnet.id}" ]
@@ -261,6 +285,7 @@ resource "aws_network_acl" "windfire-bastion-acl" {
     Name = "${var.acl["bastion"]}"
   }
 }
+
 # Create Security Groups
 resource "aws_security_group" "windfire-alb-sg" {
   vpc_id = "${aws_vpc.windfire-vpc.id}"
@@ -310,6 +335,7 @@ resource "aws_security_group" "windfire-alb-sg" {
     Name = "${var.security-group["alb"]}"
   }
 }
+
 resource "aws_security_group" "windfire-frontend-sg" {
   vpc_id = "${aws_vpc.windfire-vpc.id}"
   # allow ingress HTTP port 80 from ALB Security Group
@@ -344,6 +370,7 @@ resource "aws_security_group" "windfire-frontend-sg" {
     Name = "${var.security-group["frontend"]}"
   }
 }
+
 resource "aws_security_group" "windfire-backend-sg" {
   vpc_id = "${aws_vpc.windfire-vpc.id}"
   # allow ingress HTTP port 8082 from ALB Security Group
@@ -371,6 +398,7 @@ resource "aws_security_group" "windfire-backend-sg" {
     Name = "${var.security-group["backend"]}"
   }
 }
+
 resource "aws_security_group" "windfire-bastion-sg" {
   vpc_id = "${aws_vpc.windfire-vpc.id}"
   # allow ingress SSH port 22 from all IPs
@@ -398,21 +426,25 @@ resource "aws_security_group" "windfire-bastion-sg" {
     Name = "${var.security-group["bastion"]}"
   }
 }
+
 # Associate Route Tables with Subnets
 /*resource "aws_route_table_association" "windfire-public-association" {
   count = "${var.count}"
   subnet_id = "${element(aws_subnet.windfire-public-subnet.*.id, count.index)}"
   route_table_id = "${aws_route_table.windfire-public-route.id}"
 }*/
+
 resource "aws_route_table_association" "windfire-bastion-association" {
   subnet_id = "${aws_subnet.windfire-bastion-subnet.id}"
   route_table_id = "${aws_route_table.windfire-public-route.id}"
 }
+
 resource "aws_route_table_association" "windfire-frontend-association" {
   count = "${var.count}"
   subnet_id = "${element(aws_subnet.windfire-frontend-subnet.*.id, count.index)}"
   route_table_id = "${aws_route_table.windfire-public-route.id}"
 }
+
 resource "aws_route_table_association" "windfire-backend-association" {
   count = "${var.count}"
   subnet_id = "${element(aws_subnet.windfire-backend-subnet.*.id, count.index)}"
